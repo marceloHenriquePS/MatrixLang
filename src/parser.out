@@ -1,0 +1,224 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ID
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> CREATE ( matrix ) SEMICOLON
+Rule 2     matrix -> [ row_list ]
+Rule 3     row_list -> row
+Rule 4     row_list -> row COMMA row_list
+Rule 5     row -> [ value_list ]
+Rule 6     value_list -> value
+Rule 7     value_list -> value COMMA value_list
+Rule 8     value -> NUMBER
+Rule 9     value -> STRING
+
+Terminals, with rules where they appear
+
+(                    : 1
+)                    : 1
+COMMA                : 4 7
+CREATE               : 1
+ID                   : 
+NUMBER               : 8
+SEMICOLON            : 1
+STRING               : 9
+[                    : 2 5
+]                    : 2 5
+error                : 
+
+Nonterminals, with rules where they appear
+
+matrix               : 1
+row                  : 3 4
+row_list             : 2 4
+statement            : 0
+value                : 6 7
+value_list           : 5 7
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . CREATE ( matrix ) SEMICOLON
+
+    CREATE          shift and go to state 2
+
+    statement                      shift and go to state 1
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> CREATE . ( matrix ) SEMICOLON
+
+    (               shift and go to state 3
+
+
+state 3
+
+    (1) statement -> CREATE ( . matrix ) SEMICOLON
+    (2) matrix -> . [ row_list ]
+
+    [               shift and go to state 5
+
+    matrix                         shift and go to state 4
+
+state 4
+
+    (1) statement -> CREATE ( matrix . ) SEMICOLON
+
+    )               shift and go to state 6
+
+
+state 5
+
+    (2) matrix -> [ . row_list ]
+    (3) row_list -> . row
+    (4) row_list -> . row COMMA row_list
+    (5) row -> . [ value_list ]
+
+    [               shift and go to state 7
+
+    row_list                       shift and go to state 8
+    row                            shift and go to state 9
+
+state 6
+
+    (1) statement -> CREATE ( matrix ) . SEMICOLON
+
+    SEMICOLON       shift and go to state 10
+
+
+state 7
+
+    (5) row -> [ . value_list ]
+    (6) value_list -> . value
+    (7) value_list -> . value COMMA value_list
+    (8) value -> . NUMBER
+    (9) value -> . STRING
+
+    NUMBER          shift and go to state 13
+    STRING          shift and go to state 14
+
+    value_list                     shift and go to state 11
+    value                          shift and go to state 12
+
+state 8
+
+    (2) matrix -> [ row_list . ]
+
+    ]               shift and go to state 15
+
+
+state 9
+
+    (3) row_list -> row .
+    (4) row_list -> row . COMMA row_list
+
+    ]               reduce using rule 3 (row_list -> row .)
+    COMMA           shift and go to state 16
+
+
+state 10
+
+    (1) statement -> CREATE ( matrix ) SEMICOLON .
+
+    $end            reduce using rule 1 (statement -> CREATE ( matrix ) SEMICOLON .)
+
+
+state 11
+
+    (5) row -> [ value_list . ]
+
+    ]               shift and go to state 17
+
+
+state 12
+
+    (6) value_list -> value .
+    (7) value_list -> value . COMMA value_list
+
+    ]               reduce using rule 6 (value_list -> value .)
+    COMMA           shift and go to state 18
+
+
+state 13
+
+    (8) value -> NUMBER .
+
+    COMMA           reduce using rule 8 (value -> NUMBER .)
+    ]               reduce using rule 8 (value -> NUMBER .)
+
+
+state 14
+
+    (9) value -> STRING .
+
+    COMMA           reduce using rule 9 (value -> STRING .)
+    ]               reduce using rule 9 (value -> STRING .)
+
+
+state 15
+
+    (2) matrix -> [ row_list ] .
+
+    )               reduce using rule 2 (matrix -> [ row_list ] .)
+
+
+state 16
+
+    (4) row_list -> row COMMA . row_list
+    (3) row_list -> . row
+    (4) row_list -> . row COMMA row_list
+    (5) row -> . [ value_list ]
+
+    [               shift and go to state 7
+
+    row                            shift and go to state 9
+    row_list                       shift and go to state 19
+
+state 17
+
+    (5) row -> [ value_list ] .
+
+    COMMA           reduce using rule 5 (row -> [ value_list ] .)
+    ]               reduce using rule 5 (row -> [ value_list ] .)
+
+
+state 18
+
+    (7) value_list -> value COMMA . value_list
+    (6) value_list -> . value
+    (7) value_list -> . value COMMA value_list
+    (8) value -> . NUMBER
+    (9) value -> . STRING
+
+    NUMBER          shift and go to state 13
+    STRING          shift and go to state 14
+
+    value                          shift and go to state 12
+    value_list                     shift and go to state 20
+
+state 19
+
+    (4) row_list -> row COMMA row_list .
+
+    ]               reduce using rule 4 (row_list -> row COMMA row_list .)
+
+
+state 20
+
+    (7) value_list -> value COMMA value_list .
+
+    ]               reduce using rule 7 (value_list -> value COMMA value_list .)
+
