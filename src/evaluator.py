@@ -8,32 +8,40 @@ Supported AST nodes:
 """
 from typing import Any, Dict
 from .validator import validate_matrix
-
-
 class EvalError(Exception):
     pass
 
-
 def evaluate(ast: Any, env: Dict[str, Any] = None) -> Dict[str, Any]:
-    if env is None:
-        env = {}
+    env = env if env is not None else globals().get('env', {})
 
-    if isinstance(ast, tuple):
-        tag = ast[0]
-        if tag == 'CREATE':
-            _, matrix = ast
-            try:
-                validate_matrix(matrix)
-            except ValueError as e:
-                raise EvalError(str(e))
-            env['_last'] = matrix
-            return env
-        else:
-            raise EvalError(f"Unsupported AST node: {tag}")
+    if not isinstance(ast, tuple):
+        raise EvalError(f"Unsupported AST node: {tag}")
+    
+    tag = ast[0]
 
-    if isinstance(ast, list):
-        for node in ast:
-            evaluate(node, env)
+    if tag == 'ASSIGN':
+        _, var_name, expr = ast
+        value_env = evaluate(expr, env)
+        env[var_name] = value_env.get('_last', None)
+        return env
+
+    if tag == 'CREATE':
+        _, var_name, matrix = ast
+        try:
+            validate_matrix(matrix)
+        except ValueError as e:
+            raise EvalError(str(e))
+        
+        env[var_name] = matrix
+        env['_last'] = matrix
+        return env
+
+    if tag == 'PRINT':
+        _, var_name = ast
+        if var_name not in env:
+            raise EvalError(f"Undefined variable: {var_name}")
+        value = env[var_name]
+        print(value)
         return env
 
     raise EvalError("Invalid AST structure")

@@ -2,25 +2,31 @@ import ply.yacc as yacc
 from .matrix_lexer import tokens
 
 def p_statement_create(p):
-    """statement : CREATE '(' matrix ')' SEMICOLON"""
-    # New form: CREATE(matrix) -> produce ('CREATE', matrix)
-    p[0] = ('CREATE', p[3])
+    """statement : CREATE ID matrix SEMICOLON"""
+    p[0] = ('CREATE', p[2], p[3])
+
+def p_statement_print(p):
+    """statement : PRINT ID SEMICOLON"""
+    p[0] = ('PRINT', p[2])
+
+def p_statement_assign(p):
+    """statement : ID ASSIGN CREATE matrix SEMICOLON"""
+    p[0] = ('ASSIGN', p[1], ('CREATE', p[3], p[4]))
 
 def p_matrix(p):
-    """matrix : '[' row_list ']'"""
+    """matrix : LBRACKET rows RBRACKET"""
     p[0] = p[2]
 
-def p_row_list(p):
-    """row_list : row
-                | row COMMA row_list"""
+def p_rows(p):
+    """rows : row
+                | row COMMA rows"""
     if len(p) == 2:
         p[0] = [p[1]]
     else:
         p[0] = [p[1]] + p[3]
 
-
 def p_row(p):
-    """row : '[' value_list ']'"""
+    """row : LBRACKET value_list RBRACKET"""
     p[0] = p[2]
 
 def p_value_list(p):

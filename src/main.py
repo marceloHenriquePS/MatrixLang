@@ -1,36 +1,52 @@
 from . import matrix_parser
 from .validator import validate_matrix
+from .evaluator import evaluate
 
-def parse_and_validate(input_string):
-    ast = matrix_parser.matrix_parser.parse(input_string)
+env = {}
 
-    if ast is None:
+def parse(matrix_str):
+    ast = matrix_parser.matrix_parser.parse(matrix_str)
+    if not ast:
         raise ValueError("Syntax error: could not parse input")
-
-    if ast[0] == 'CREATE':
-        matrix = ast[1]
-    else:
-        raise ValueError("Unsupported operation")
-    
-    validate_matrix(matrix)
-    
-    return matrix
+    return ast
 
 def main():
-    matrixes = ["""CREATE(
+    matrix = """matrix = CREATE
                     [
                         [1,2,3],
                         [3,4,4],
                         [5,6,7]
                     ]
-                );""",]
+                ;"""
+    
+    matrix = """matrix = CREATE
+                    [
+                        [1,2,3],
+                        [3,4,4],
+                        [8,8,8]
+                    ]
+                ;"""
+    
+    print = """PRINT matrix;"""
 
-    for input_str in matrixes:
-        try:
-            matrix = parse_and_validate(input_str)
-            print("Parsed and validated matrix:", matrix)
-        except ValueError as e:
-            print("Validation error:", e)
+    ast = parse(matrix)
+    evaluate(ast, env)
+
+    ast = parse(print)
+    evaluate(ast, env)
+
+    # printtest = ["""myMatrix = CREATE [[1,2,3],[3,4,4]];""", 
+    #             """PRINT myMatrix;"""]
+    
+    # for m in printtest:
+    #     ast = parse(m)
+    #     evaluate(ast, env)
+
+    # ast_create = ('CREATE', 'myMatrix', [[1,2,3],[4,5,6]])
+    # evaluate(ast_create, env)
+
+    # ast_print = ('PRINT', 'myMatrix')
+    # evaluate(ast_print, env)
 
 
 if __name__ == "__main__":

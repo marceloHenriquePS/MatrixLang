@@ -2,21 +2,27 @@ import ply.lex as lex
 
 tokens = (
     'CREATE',
+    'PRINT',
+    'ASSIGN',
     'ID',
     'NUMBER',
     'STRING',
     'COMMA',
     'SEMICOLON',
+    'LBRACKET',
+    'RBRACKET',
 )
 
-literals = '[]()'
-
 reserved = {
-    'create': 'CREATE'
+    'create': 'CREATE',
+    'print': 'PRINT',
     }
 
 t_COMMA = r','
 t_SEMICOLON = r';'
+t_ASSIGN = r'='
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]'
 
 t_ignore = ' \t'
 
