@@ -123,4 +123,4 @@ def p_error(p):
     else:
         print(f"Syntax error at end of file.")
 
-matrix_parser = yacc.yacc()
+matrix_parser = yacc.yacc( write_tables=False, debug=False)
