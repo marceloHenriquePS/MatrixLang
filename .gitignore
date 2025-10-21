@@ -48,3 +48,12 @@ src/parser.out
 # OS files
 Thumbs.db
 .DS_Store
+
+# Tkinter temporary files
+*.tkinter
+
+# PyInstaller
+dist/
+build/
+# PyInstaller spec file
+*.spec
