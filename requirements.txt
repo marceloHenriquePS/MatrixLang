@@ -1,2 +1,11 @@
 ply==3.11
 pytest==8.4.2
+numpy==1.26.4
+scipy==1.11.4
+sympy==1.12
+tk==0.1.0
+tkintertable==1.4.2
+webbrowser==0.0.0
+typing-extensions==4.11.0
+tkscrolledframe==1.0.1
+scrolledtext==0.0.1
