@@ -6,14 +6,15 @@ has been removed.
 
 Run: python ui/tk_ui.py
 """
+import webbrowser
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, Toplevel,  scrolledtext
 
 from . import controller
 
 def main():
     root = tk.Tk()
-    root.title("MatrixLang — Simple UI")
+    root.title("MatrixLang IDE")
     root.geometry("900x640")
 
     # Top frame with buttons (no commands)
@@ -61,13 +62,19 @@ def main():
         controller.run_code(txt, append_output)
 
     def on_help():
-        # Get help text from controller and show in a dialog
-        try:
-            text = controller.get_help_text()
-        except Exception:
-            text = "Help not available."
-        # Use a simple messagebox to display the help text
-        messagebox.showinfo("MatrixLang Help", text)
+        help_text = controller.get_help_text()
+
+        win = Toplevel()
+        win.title("MatrixLang Help")
+        win.geometry("600x500")
+
+        txt = scrolledtext.ScrolledText(win, wrap=tk.WORD)
+        txt.insert(tk.END, help_text)
+        txt.config(state=tk.DISABLED)
+        txt.pack(fill=tk.BOTH, expand=True)
+
+        btn = tk.Button(win, text="GitHub", command=lambda: webbrowser.open("https://github.com/marceloHenriquePS/MatrixLang.git"))
+        btn.pack(pady=5)
 
     paned.add(editor_frame, weight=3)
     paned.add(output_frame, weight=2)
@@ -76,7 +83,6 @@ def main():
     help_btn.config(command=on_help)
 
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()

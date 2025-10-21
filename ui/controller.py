@@ -1,33 +1,40 @@
-"""Empty controller skeleton — start from scratch.
+"""UI controller for MatrixLang."""
 
-Replace the contents of this file with the controller implementation you want.
-Common functions the UI expects:
-- run_code(code: str, append_output: Callable[[str], None]) -> None
-- open_help() -> None
-
-For now these are minimal placeholders.
-"""
 from src import matrix_parser as mp
 from src import evaluator as ev
 from typing import Callable
 import re, io, sys, copy
 
 def get_help_text() -> str:
-    """Return a help text describing available commands and examples.
-
-    The UI will display this text in a dialog when the user clicks Help.
-    """
+    """Return a help text describing available commands and examples."""
     return (
-        "Available commands:\n\n"
-        "1) CREATE matrix;\n"
-        "   - Example: A = CREATE [[1, 2], [3, 4]];\n\n"
-        "2) PRINT matrix_name;\n"
-        "   - Example: PRINT A;\n\n"
-        "Notes:\n"
-        "- Statements must end with a semicolon (;).\n"
-        "- CREATE expects numeric values (int or float) inside the nested lists.\n"
+        "MatrixLang Help\n\n"
+        "MatrixLang is a simple language for performing matrix operations.\n\n"
+        "Available commands:\n"
+        "  - CREATE name [[row1], [row2], ...]: Create a matrix with the given name\n"
+        "  - PRINT(name): Print the matrix with the given name\n\n"
+        "Matrix operations:\n"
+        "  - MSUM(A, B, ...): Sum of matrices A, B, ...\n"
+        "  - MSUB(A, B, ...): Subtraction of matrices A, B, ...\n"
+        "  - MMULT(A, B): Multiplication of matrices A and B\n"
+        "  - MDIV(A, B): Division of matrix A by B\n"
+        "  - MINVERSE(A): Inverse of matrix A\n"
+        "  - MTRANSPOSE(A): Transpose of matrix A\n"
+        "  - MRANK(A): Rank of matrix A\n"
+        "  - MDET(A): Determinant of matrix A\n"
+        "  - MEIGENVALUES(A): Eigenvalues of matrix A\n"
+        "  - MEIGENVECTORS(A): Eigenvectors of matrix A\n"
+        "  - MTRIUPPER(A): Upper triangular form of matrix A\n"
+        "  - MTRILOWER(A): Lower triangular form of matrix A\n"
+        "  - MESCALE(A): Scaled echelon form of matrix A\n\n"
+        "Example usage:\n"
+        "  CREATE A [[1, 2], [3, 4]];\n"
+        "  CREATE B [[5, 6], [7, 8]];\n"
+        "  CREATE C [[1, 2], [4, 5]];\n"
+        "  D = MSUM(A, B, C);\n"
+        "  E = MMULT(A, B);\n"
+        "  F = MINVERSE(A);\n"
     )
-
 
 def run_code(code: str, append_output: Callable[[str], None]) -> None:
     """Placeholder: run code and send output via append_output.
@@ -48,7 +55,7 @@ def run_code(code: str, append_output: Callable[[str], None]) -> None:
 
     for st in stmts:
         st_strip = st.strip()
-        temp_env = copy.deepcopy(_env)
+        temp_env = copy.copy(_env)
 
         old_stdout = sys.stdout
         buf = io.StringIO()
@@ -58,20 +65,24 @@ def run_code(code: str, append_output: Callable[[str], None]) -> None:
                 ast = mp.matrix_parser.parse(st_strip)
                 if not ast:
                     append_output(f'Could not parse statement: {st_strip}\n')
-                    continue
+                    return
                 ev.evaluate(ast, env=temp_env)
             except ev.EvalError as ee:
                 append_output(f'EvalError: {ee}\n')
-                continue
+                return
             except Exception as e:
                 append_output(f'Execution error: {e}\n')
-                continue
+                return
         finally:
             sys.stdout = old_stdout
 
         _env.update(temp_env)
 
-        output = buf.getvalue()
-        if output:
-            append_output(output)
+        output_text = buf.getvalue().strip()
+        if output_text:
+            lines = output_text.splitlines()
+            formatted_output = ">>> " + lines[0]
+            if len(lines) > 1:
+                formatted_output += "\n" + "\n".join("... " + line for line in lines[1:])
+            append_output(formatted_output + "\n")
 
